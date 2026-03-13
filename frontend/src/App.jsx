@@ -1,27 +1,31 @@
 import { useEffect, useMemo, useState } from "react";
 import { createProduct, deleteProduct, getProducts, updateProduct } from "./api/productsApi";
+import "./App.scss";
 
-/**
- * Практика 4 (заготовка).
- * Важно: это НЕ готовое решение. В файле api/productsApi.js стоят TODO.
- * Цель: подключить React к вашему Express API и выполнить базовый CRUD.
- */
+const initialForm = {
+  title: "",
+  category: "",
+  description: "",
+  price: "",
+  stock: "",
+  rating: "",
+  imageUrl: "",
+};
+
 export default function App() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  // Минимальная форма добавления товара
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-
-  const canSubmit = useMemo(() => title.trim() !== "" && price !== "", [title, price]);
+  const [selectedCategory, setSelectedCategory] = useState("Все");
+  const [form, setForm] = useState(initialForm);
+  const [editingId, setEditingId] = useState("");
+  const [saving, setSaving] = useState(false);
 
   async function load() {
     setError("");
     setLoading(true);
     try {
-      const data = await getProducts(); // TODO: заработает после реализации productsApi.js
+      const data = await getProducts();
       setItems(data);
     } catch (e) {
       setError(String(e?.message || e));
@@ -34,39 +38,89 @@ export default function App() {
     load();
   }, []);
 
-  async function onAdd(e) {
+  const categories = useMemo(() => {
+    const all = items.map((p) => p.category).filter(Boolean);
+    return ["Все", ...Array.from(new Set(all))];
+  }, [items]);
+
+  const filteredItems = useMemo(() => {
+    if (selectedCategory === "Все") return items;
+    return items.filter((p) => p.category === selectedCategory);
+  }, [items, selectedCategory]);
+
+  const canSubmit = useMemo(() => {
+    return (
+      form.title.trim() !== "" &&
+      form.category.trim() !== "" &&
+      form.description.trim() !== "" &&
+      form.price !== "" &&
+      form.stock !== ""
+    );
+  }, [form]);
+
+  function onFieldChange(e) {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function onSubmit(e) {
     e.preventDefault();
     if (!canSubmit) return;
 
     setError("");
+    setSaving(true);
+
+    const payload = {
+      title: form.title.trim(),
+      category: form.category.trim(),
+      description: form.description.trim(),
+      price: Number(form.price),
+      stock: Number(form.stock),
+      rating: form.rating === "" ? 0 : Number(form.rating),
+      imageUrl: form.imageUrl.trim(),
+    };
+
     try {
-      await createProduct({
-        title: title.trim(),
-        // TODO (студентам): дополнить payload полями category/description/stock/...
-        price: Number(price),
-      });
-      setTitle("");
-      setPrice("");
+      if (editingId) {
+        await updateProduct(editingId, payload);
+      } else {
+        await createProduct(payload);
+      }
+      setForm(initialForm);
+      setEditingId("");
       await load();
     } catch (e) {
       setError(String(e?.message || e));
+    } finally {
+      setSaving(false);
     }
+  }
+
+  function onEdit(item) {
+    setEditingId(item.id);
+    setForm({
+      title: item.title || "",
+      category: item.category || "",
+      description: item.description || "",
+      price: String(item.price ?? ""),
+      stock: String(item.stock ?? ""),
+      rating: String(item.rating ?? ""),
+      imageUrl: item.imageUrl || "",
+    });
+  }
+
+  function onCancelEdit() {
+    setEditingId("");
+    setForm(initialForm);
   }
 
   async function onDelete(id) {
     setError("");
     try {
       await deleteProduct(id);
-      await load();
-    } catch (e) {
-      setError(String(e?.message || e));
-    }
-  }
-
-  async function onPricePlus(id, currentPrice) {
-    setError("");
-    try {
-      await updateProduct(id, { price: Number(currentPrice) + 10 });
+      if (editingId === id) {
+        onCancelEdit();
+      }
       await load();
     } catch (e) {
       setError(String(e?.message || e));
@@ -74,69 +128,104 @@ export default function App() {
   }
 
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto", padding: 24, fontFamily: "system-ui" }}>
-      <h1>Практика 4 — React + Express API</h1>
+    <div className="shop-page">
+      <div className="shop-page__bg" />
 
-      <p style={{ color: "#555" }}>
-        Если видите ошибку <code>TODO: реализуйте ...</code>, значит вы ещё не реализовали функции в{" "}
-        <code>src/api/productsApi.js</code>.
-      </p>
+      <header className="shop-header">
+        <h1>Food Market</h1>
+        <p>Учебный каталог продуктов питания на React + Express</p>
 
-      <section style={{ marginTop: 24, padding: 16, border: "1px solid #ddd", borderRadius: 12 }}>
-        <h2 style={{ marginTop: 0 }}>Добавить товар</h2>
-        <form onSubmit={onAdd} style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+        <div className="shop-controls">
+          <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+
+          <button type="button" onClick={load}>
+            Обновить
+          </button>
+        </div>
+      </header>
+
+      <section className="product-form-wrap">
+        <h2>{editingId ? "Редактировать товар" : "Добавить товар"}</h2>
+        <form className="product-form" onSubmit={onSubmit}>
+          <input name="title" value={form.title} onChange={onFieldChange} placeholder="Название" />
+          <input name="category" value={form.category} onChange={onFieldChange} placeholder="Категория" />
+          <input name="description" value={form.description} onChange={onFieldChange} placeholder="Описание" />
+          <input name="price" type="number" min="0" value={form.price} onChange={onFieldChange} placeholder="Цена" />
+          <input name="stock" type="number" min="0" value={form.stock} onChange={onFieldChange} placeholder="На складе" />
           <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Название"
-            style={{ padding: 10, minWidth: 220 }}
-          />
-          <input
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            placeholder="Цена"
+            name="rating"
             type="number"
-            style={{ padding: 10, width: 140 }}
+            min="0"
+            max="5"
+            step="0.1"
+            value={form.rating}
+            onChange={onFieldChange}
+            placeholder="Рейтинг (0-5)"
           />
-          <button disabled={!canSubmit} style={{ padding: "10px 14px" }}>
-            Добавить
-          </button>
-          <button type="button" onClick={load} style={{ padding: "10px 14px" }}>
-            Обновить список
-          </button>
+          <input name="imageUrl" value={form.imageUrl} onChange={onFieldChange} placeholder="Ссылка на фото" />
+
+          <div className="product-form__actions">
+            <button type="submit" disabled={!canSubmit || saving}>
+              {editingId ? "Сохранить" : "Создать"}
+            </button>
+            {editingId && (
+              <button type="button" onClick={onCancelEdit} className="secondary">
+                Отмена
+              </button>
+            )}
+          </div>
         </form>
       </section>
 
-      <section style={{ marginTop: 24 }}>
-        <h2>Список товаров</h2>
+      {loading && <p className="status">Загрузка товаров...</p>}
+      {error && <p className="status status--error">Ошибка: {error}</p>}
 
-        {loading && <p>Загрузка...</p>}
-        {error && (
-          <p style={{ color: "crimson" }}>
-            Ошибка: {error}
-            <br />
-            Проверьте, что: (1) backend запущен на 3000, (2) CORS настроен, (3) TODO в productsApi.js реализованы.
-          </p>
-        )}
+      <section className="products-grid">
+        {filteredItems.map((item) => (
+          <article className="product-card" key={item.id}>
+            <img
+              className="product-card__image"
+              src={item.imageUrl || "https://via.placeholder.com/600x400?text=No+Image"}
+              alt={item.title}
+              loading="lazy"
+            />
 
-        <ul style={{ paddingLeft: 18 }}>
-          {items.map((p) => (
-            <li key={p.id} style={{ marginBottom: 8 }}>
-              <b>{p.title}</b> — {p.price} ₽{" "}
-              <button onClick={() => onPricePlus(p.id, p.price)} style={{ marginLeft: 8 }}>
-                +10 ₽
-              </button>
-              <button onClick={() => onDelete(p.id)} style={{ marginLeft: 8 }}>
-                Удалить
-              </button>
-            </li>
-          ))}
-        </ul>
+            <div className="product-card__body">
+              <span className="product-card__category">{item.category || "Без категории"}</span>
+              <h3>{item.title}</h3>
+              <p>{item.description || "Без описания"}</p>
 
-        <p style={{ color: "#555" }}>
-          TODO (студентам): добавить категории, описание, остаток на складе, картинку и т.п. + сделать красивый UI.
-        </p>
+              <div className="product-card__meta">
+                <span>
+                  Цена: <b>{Number(item.price) || 0} ₽</b>
+                </span>
+                <span>
+                  На складе: <b>{Number(item.stock) || 0} шт.</b>
+                </span>
+              </div>
+
+              <div className="product-card__rating">Рейтинг: {Number(item.rating || 0).toFixed(1)} / 5</div>
+
+              <div className="product-card__actions">
+                <button type="button" onClick={() => onEdit(item)}>
+                  Редактировать
+                </button>
+                <button type="button" className="danger" onClick={() => onDelete(item.id)}>
+                  Удалить
+                </button>
+              </div>
+            </div>
+          </article>
+        ))}
       </section>
+
+      {!loading && filteredItems.length === 0 && <p className="status">По выбранной категории товаров нет.</p>}
     </div>
   );
 }

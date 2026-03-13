@@ -15,7 +15,7 @@ router.get("/", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const { title, price } = req.body;
+    const { title, category, description, price, stock, rating, imageUrl } = req.body;
 
     if (typeof title !== "string" || title.trim() === "") {
       return res.status(400).json({ error: "title is required" });
@@ -24,7 +24,12 @@ router.post("/", async (req, res, next) => {
     const newProduct = {
       id: nanoid(8),
       title: title.trim(),
+      category: typeof category === "string" ? category.trim() : "Без категории",
+      description: typeof description === "string" ? description.trim() : "",
       price: Number(price) || 0,
+      stock: Number.isFinite(Number(stock)) ? Number(stock) : 0,
+      rating: Number.isFinite(Number(rating)) ? Number(rating) : 0,
+      imageUrl: typeof imageUrl === "string" ? imageUrl.trim() : "",
     };
 
     await store.add(newProduct);

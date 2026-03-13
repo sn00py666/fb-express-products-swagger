@@ -154,24 +154,58 @@ components:
           example: ab12cd34
         title:
           type: string
-          example: Наушники
+          example: Яблоки Гала
+        category:
+          type: string
+          example: Фрукты
+        description:
+          type: string
+          example: Сладкие свежие яблоки, 1 кг.
         price:
           type: number
-          example: 1990
-      required: [id, title, price]
+          example: 149
+        stock:
+          type: number
+          example: 35
+        rating:
+          type: number
+          example: 4.7
+        imageUrl:
+          type: string
+          example: https://images.example.com/apple.jpg
+      required: [id, title, category, description, price, stock]
 
     ProductCreate:
       type: object
       properties:
         title:
           type: string
-          example: Наушники
+          example: Яблоки Гала
+        category:
+          type: string
+          example: Фрукты
+        description:
+          type: string
+          example: Сладкие свежие яблоки, 1 кг.
         price:
           oneOf:
             - type: number
             - type: string
-          example: 1990
-      required: [title]
+          example: 149
+        stock:
+          oneOf:
+            - type: number
+            - type: string
+          example: 35
+        rating:
+          oneOf:
+            - type: number
+            - type: string
+          example: 4.7
+        imageUrl:
+          type: string
+          example: https://images.example.com/apple.jpg
+      required: [title, category, description, price, stock]
 
     ProductPatch:
       type: object

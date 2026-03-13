@@ -1,3 +1,122 @@
 [
-  { "id":"p1", "title":"Печенье", "price":79, "category":"Сладости", "description":"...", "stock":20, "rating":4.6, "imageUrl":"" }
+  {
+    "id": "f1",
+    "title": "Яблоки Гала",
+    "category": "Фрукты",
+    "description": "Сладкие свежие яблоки, 1 кг.",
+    "price": 149,
+    "stock": 35,
+    "rating": 4.7,
+    "imageUrl": "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": "f2",
+    "title": "Бананы",
+    "category": "Фрукты",
+    "description": "Спелые бананы, 1 кг.",
+    "price": 129,
+    "stock": 28,
+    "rating": 4.6,
+    "imageUrl": "https://avatars.mds.yandex.net/i?id=ef8fb2b4efc12e9f8512fc25f8121573_l-5587324-images-thumbs&n=13"
+  },
+  {
+    "id": "f3",
+    "title": "Томаты черри",
+    "category": "Овощи",
+    "description": "Красные томаты черри, упаковка 500 г.",
+    "price": 189,
+    "stock": 18,
+    "rating": 4.5,
+    "imageUrl": "https://images.unsplash.com/photo-1546094096-0df4bcaaa337?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": "f4",
+    "title": "Огурцы",
+    "category": "Овощи",
+    "description": "Хрустящие тепличные огурцы, 1 кг.",
+    "price": 139,
+    "stock": 22,
+    "rating": 4.3,
+    "imageUrl": "https://images.unsplash.com/photo-1604977042946-1eecc30f269e?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": "f5",
+    "title": "Молоко 2.5%",
+    "category": "Молочные продукты",
+    "description": "Пастеризованное молоко, 1 л.",
+    "price": 99,
+    "stock": 40,
+    "rating": 4.4,
+    "imageUrl": "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": "f6",
+    "title": "Сыр гауда",
+    "category": "Молочные продукты",
+    "description": "Полутвердый сыр, 300 г.",
+    "price": 279,
+    "stock": 14,
+    "rating": 4.8,
+    "imageUrl": "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": "f7",
+    "title": "Куриное филе",
+    "category": "Мясо",
+    "description": "Охлажденное куриное филе, 700 г.",
+    "price": 329,
+    "stock": 16,
+    "rating": 4.7,
+    "imageUrl": "https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": "f8",
+    "title": "Лосось стейк",
+    "category": "Рыба",
+    "description": "Охлажденный стейк лосося, 400 г.",
+    "price": 599,
+    "stock": 9,
+    "rating": 4.9,
+    "imageUrl": "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": "f9",
+    "title": "Макароны из твердых сортов",
+    "category": "Бакалея",
+    "description": "Спагетти, упаковка 450 г.",
+    "price": 119,
+    "stock": 33,
+    "rating": 4.2,
+    "imageUrl": "https://images.unsplash.com/photo-1551892374-ecf8754cf8b0?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": "f10",
+    "title": "Рис жасмин",
+    "category": "Бакалея",
+    "description": "Ароматный белый рис, 900 г.",
+    "price": 169,
+    "stock": 27,
+    "rating": 4.4,
+    "imageUrl": "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": "f11",
+    "title": "Темный шоколад 72%",
+    "category": "Сладости",
+    "description": "Плитка темного шоколада, 100 г.",
+    "price": 139,
+    "stock": 24,
+    "rating": 4.6,
+    "imageUrl": "https://images.unsplash.com/photo-1511381939415-e44015466834?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    "id": "f12",
+    "title": "Апельсиновый сок",
+    "category": "Напитки",
+    "description": "Сок прямого отжима, 1 л.",
+    "price": 179,
+    "stock": 21,
+    "rating": 4.5,
+    "imageUrl": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=600&q=80"
+  }
 ]
